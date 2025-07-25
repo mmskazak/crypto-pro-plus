@@ -11,6 +11,7 @@ declare global {
   interface Window { cadesplugin: any }
 }
 
+await window.cadesplugin;
 const CADES = window.cadesplugin;          // alias, чтобы короче писать
 
 export type CADESCertificate = any;        // точных типов нет в публичных d.ts
