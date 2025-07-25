@@ -4,7 +4,7 @@
     "name": "@mmskazak/crypto-pro-plus",
     
 
-    "version": "0.1.1",
+    "version": "0.1.2",
     
 
     "description": "Drop‑in replacement for vgoma/crypto-pro with TSP support",
@@ -79,8 +79,6 @@
     
 
     },
-    
-    
     
 
     "devDependencies": {
