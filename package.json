@@ -1,0 +1,31 @@
+{
+    "name": "@mmskazak/crypto-pro-plus", 
+    "version": "0.1.0",
+    "description": "Drop‑in replacement for vgoma/crypto-pro with TSP support",
+    "main": "dist/crypto-pro-plus.cjs.js",
+    "module": "dist/crypto-pro-plus.esm.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "import": "./dist/crypto-pro-plus.esm.js",
+        "require": "./dist/crypto-pro-plus.cjs.js"
+      }
+    },
+    "files": ["dist"],
+    "scripts": {
+      "build": "tsup src/index.ts --dts --format esm,cjs",
+      "test": "playwright test",
+      "prepublishOnly": "npm run build && npm test"
+    },
+    "peerDependencies": {
+      "crypto-pro-actual-cades-plugin": ">=2.4.1"
+    },
+    "devDependencies": {
+      "tsup": "^8",
+      "typescript": "^5",
+      "playwright": "^1.44"
+    },
+    "repository": "https://github.com/your-name/crypto-pro-plus",
+    "license": "MIT"
+  }
+  
