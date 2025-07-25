@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
       /* ---- базовое ---- */
-      "target": "es2017",                 // код генерим под движки Chrome 58+, Node 14+
-      "module": "esnext",                 // tsup сам перезавёрстывает в esm/cjs
+      "target": "ES2022",            
+      "module": "ESNext",                 // tsup сам перезавёрстывает в esm/cjs
       "moduleResolution": "node",
       "lib": ["dom", "es2017"],           // DOM‑API + Promise/Map/Set/…
       "outDir": "dist/types",             // временно; tsup потом кладёт финальные .d.ts в dist/
