@@ -11,9 +11,6 @@ declare global {
   interface Window { cadesplugin: any }
 }
 
-await window.cadesplugin;
-const CADES = window.cadesplugin;          // alias, чтобы короче писать
-
 export type CADESCertificate = any;        // точных типов нет в публичных d.ts
 
 /**
@@ -25,6 +22,9 @@ export type CADESCertificate = any;        // точных типов нет в 
  * Бросает Error, если что‑то не готово.
  */
 export async function ensureReady(): Promise<CADESCertificate> {
+  await window.cadesplugin;
+  const CADES = window.cadesplugin;          // alias, чтобы короче писать
+
   /* 0. Ждём промис плагина.
         Если расширение/host отсутствуют, Promise так и не resolve — ловим. */
   try {
