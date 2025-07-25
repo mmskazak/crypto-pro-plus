@@ -9,6 +9,7 @@
 import { ensureReady, type CADESCertificate } from './api/ensureReady';
 import createDetachedSignature from './api/createDetachedSignature';
 import createTimestampedDetachedSignature from './api/createTimestampedDetachedSignature';
+import createAttachedSignature from "./api/createAttachedSignature";
 
 /* ---------------------------------------------------------------- *\
  *  Глобальный плагин и «константы по ГОСТ» – пригодятся ниже
@@ -50,20 +51,8 @@ export { createDetachedSignature };
 /**  NEW!  Detached CAdES‑BES  +  TSP‑штамп  */
 export { createTimestampedDetachedSignature };
 
-/** Упрощённая attached‑подпись (PKCS#7 внутри данных) */
-export async function createAttachedSignature(message: string): Promise<string> {
-  const cert: CADESCertificate = await ensureReady();
+export { createAttachedSignature };
 
-  const sd = await CADES.CreateObjectAsync('CAdESCOM.CadesSignedData');
-  await sd.propset_ContentEncoding(STR);                 // строка → UCS‑2 LE
-  await sd.propset_Content(message);
-
-  const signer = await CADES.CreateObjectAsync('CAdESCOM.CPSigner');
-  await signer.propset_Certificate(cert);
-
-  /* detached = false → «attached» */
-  return await sd.SignCades(signer, CADES.CADESCOM_CADES_BES, /* detached */ false);
-}
 
 /** Аналог cryptoPro.createHash() — ГОСТ‑хэш + base64 */
 export async function createHash(message: string): Promise<string> {

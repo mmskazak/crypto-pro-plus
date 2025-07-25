@@ -1,4 +1,4 @@
-# **@mikhail/crypto-pro-plus**
+# **@mmskazak/crypto-pro-plus**
 
 Drop‑in replacement for the original [`crypto-pro`](https://www.npmjs.com/package/crypto-pro) package, rewritten from scratch for ⚡ **compact size**, 🕒 **TSP‑timestamp support**, and full **TypeScript** typings.
 
@@ -21,9 +21,9 @@ Drop‑in replacement for the original [`crypto-pro`](https://www.npmjs.com/pack
 ## 📦 Installation
 
 ```bash
-npm i @mikhail/crypto-pro-plus
+npm i @mmskazak/crypto-pro-plus
 # или
-yarn add @mikhail/crypto-pro-plus
+yarn add @mmskazak/crypto-pro-plus
 ```
 
 > **Peer dependency**: браузерное расширение *CryptoPro CAdES* ≥ 1.3 and host ≥ 2.0.15400 must be installed on the client PC.
@@ -33,7 +33,7 @@ yarn add @mikhail/crypto-pro-plus
 ## 🚀 Quick start
 
 ```ts
-import * as cryptoPro from '@mikhail/crypto-pro-plus';
+import * as cryptoPro from '@mmskazak/crypto-pro-plus';
 
 const hash = await cryptoPro.createHash('Hello, world!');
 const pkcs7 = await cryptoPro.createTimestampedDetachedSignature(
