@@ -1,3 +1,4 @@
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6,6 +7,10 @@ var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -23,6 +28,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/crypto-pro-actual-cades-plugin/lib/crypto-pro-actual-cades-plugin.js
 var require_crypto_pro_actual_cades_plugin = __commonJS({
@@ -2922,11 +2928,11 @@ var require_crypto_pro_actual_cades_plugin = __commonJS({
             /***/
             function(module2, exports2, __webpack_require__2) {
               "use strict";
-              function __export(m) {
+              function __export2(m) {
                 for (var p in m) if (!exports2.hasOwnProperty(p)) exports2[p] = m[p];
               }
               Object.defineProperty(exports2, "__esModule", { value: true });
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./certificate */
                 "./api/certificate/certificate.ts"
               ));
@@ -3762,51 +3768,51 @@ var require_crypto_pro_actual_cades_plugin = __commonJS({
             /***/
             function(module2, exports2, __webpack_require__2) {
               "use strict";
-              function __export(m) {
+              function __export2(m) {
                 for (var p in m) if (!exports2.hasOwnProperty(p)) exports2[p] = m[p];
               }
               Object.defineProperty(exports2, "__esModule", { value: true });
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./getCertificate */
                 "./api/getCertificate.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./getUserCertificates */
                 "./api/getUserCertificates.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./getSystemInfo */
                 "./api/getSystemInfo.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./isValidSystemSetup */
                 "./api/isValidSystemSetup.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./createSignature */
                 "./api/createSignature.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./createXMLSignature */
                 "./api/createXMLSignature.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./createDetachedSignature */
                 "./api/createDetachedSignature.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./createAttachedSignature */
                 "./api/createAttachedSignature.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./createHash */
                 "./api/createHash.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./certificate */
                 "./api/certificate/index.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./execute */
                 "./api/execute.ts"
               ));
@@ -4057,23 +4063,23 @@ var require_crypto_pro_actual_cades_plugin = __commonJS({
             /***/
             function(module2, exports2, __webpack_require__2) {
               "use strict";
-              function __export(m) {
+              function __export2(m) {
                 for (var p in m) if (!exports2.hasOwnProperty(p)) exports2[p] = m[p];
               }
               Object.defineProperty(exports2, "__esModule", { value: true });
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./cades-constants */
                 "./constants/cades-constants.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./issuer-tags-translations */
                 "./constants/issuer-tags-translations.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./oids-dictionary */
                 "./constants/oids-dictionary.ts"
               ));
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./subject-tags-translations */
                 "./constants/subject-tags-translations.ts"
               ));
@@ -4202,11 +4208,11 @@ var require_crypto_pro_actual_cades_plugin = __commonJS({
             /***/
             function(module2, exports2, __webpack_require__2) {
               "use strict";
-              function __export(m) {
+              function __export2(m) {
                 for (var p in m) if (!exports2.hasOwnProperty(p)) exports2[p] = m[p];
               }
               Object.defineProperty(exports2, "__esModule", { value: true });
-              __export(__webpack_require__2(
+              __export2(__webpack_require__2(
                 /*! ./api */
                 "./api/index.ts"
               ));
@@ -4552,6 +4558,21 @@ var require_crypto_pro_actual_cades_plugin = __commonJS({
   }
 });
 
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
+  createAttachedSignature: () => createAttachedSignature,
+  createDetachedSignature: () => createDetachedSignature_default,
+  createHash: () => createHash,
+  createSignature: () => createSignature,
+  createTimestampedDetachedSignature: () => createTimestampedDetachedSignature_default,
+  ensureReady: () => ensureReady,
+  execute: () => execute,
+  getSystemInfo: () => getSystemInfo,
+  isValidSystemSetup: () => isValidSystemSetup
+});
+module.exports = __toCommonJS(index_exports);
+
 // src/api/ensureReady.ts
 var import_crypto_pro_actual_cades_plugin = __toESM(require_crypto_pro_actual_cades_plugin(), 1);
 async function ensureReady() {
@@ -4700,17 +4721,18 @@ async function execute(fn) {
   await ensureReady();
   return await fn();
 }
-export {
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
   createAttachedSignature,
-  createDetachedSignature_default as createDetachedSignature,
+  createDetachedSignature,
   createHash,
   createSignature,
-  createTimestampedDetachedSignature_default as createTimestampedDetachedSignature,
+  createTimestampedDetachedSignature,
   ensureReady,
   execute,
   getSystemInfo,
   isValidSystemSetup
-};
+});
 /*! Bundled license information:
 
 crypto-pro-actual-cades-plugin/lib/crypto-pro-actual-cades-plugin.js:

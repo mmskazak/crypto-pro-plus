@@ -13,6 +13,17 @@ declare global {
 
 export type CADESCertificate = any;        // точных типов нет в публичных d.ts
 
+function loadCadesPluginScript(): Promise<void> {
+  if (window.cadesplugin) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "/src/lib/cadesplugin_api.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Не удалось загрузить cadesplugin_api.js"));
+    document.head.appendChild(script);
+  });
+}
+
 /**
  * ensureReady()                       
  * ‑ ждёт загрузку браузерного плагина/host’а, 
@@ -22,6 +33,7 @@ export type CADESCertificate = any;        // точных типов нет в 
  * Бросает Error, если что‑то не готово.
  */
 export async function ensureReady(): Promise<CADESCertificate> {
+  await loadCadesPluginScript();
   await window.cadesplugin;
   const CADES = window.cadesplugin;          // alias, чтобы короче писать
 
