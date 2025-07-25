@@ -2,34 +2,134 @@
     
 
     "name": "@mmskazak/crypto-pro-plus",
-    "version": "0.1.0",
+    
+
+    "version": "0.1.1",
+    
+
     "description": "Drop‑in replacement for vgoma/crypto-pro with TSP support",
-    "main": "dist/index.js",         
-    "module": "dist/index.mjs",      
-    "types": "dist/index.d.ts",      
+    
+
+    "main": "dist/index.js",
+    
+
+    "module": "dist/index.mjs",
+    
+
+    "types": "dist/index.d.ts",
+    
+
     "exports": {
-        ".": {
-        "import": "./dist/index.mjs",
-         "require": "./dist/index.js"
-        }
+    
+
+        
+
+    ".": {
+    
+
+        
+
+        
+
+    "import": "./dist/index.mjs",
+    
+
+        
+
+        
+
+    "require": "./dist/index.js"
+    
+
+        
+
+    }
+    
+
     },
-    "files": ["dist"],             
+    
+
+    "files": [
+    
+
+        
+
+    "dist"
+    
+
+    ],
+    
+
     "scripts": {
-        "build": "tsup src/index.ts --dts --format esm,cjs",
-        "test": "echo \"(tests skipped)\"",
-        "prepublishOnly": "npm run build && npm test"
+    
+
+        
+
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    
+
+        
+
+    "test": "echo \"(tests skipped)\"",
+    
+
+        
+
+    "prepublishOnly": "npm run build && npm test"
+    
+
     },
+    
+
     "peerDependencies": {
-        "crypto-pro-actual-cades-plugin": ">=2.4.1"
+    
+
+        
+
+    "crypto-pro-actual-cades-plugin": ">=2.4.1"
+    
+
     },
+    
+
     "devDependencies": {
-        "@types/jest": "^30.0.0",
-        "jest": "^30.0.5",
-        "playwright": "^1.44",
-        "ts-jest": "^29.4.0",
-        "tsup": "^8",
-        "typescript": "^5"
+    
+
+        
+
+    "@types/jest": "^30.0.0",
+    
+
+        
+
+    "jest": "^30.0.5",
+    
+
+        
+
+    "playwright": "^1.44",
+    
+
+        
+
+    "ts-jest": "^29.4.0",
+    
+
+        
+
+    "tsup": "^8",
+    
+
+        
+
+    "typescript": "^5"
+    
+
     },
+    
+
     "repository": "https://github.com/mmskazak/crypto-pro-plus",
+    
+
     "license": "MIT"
 }
