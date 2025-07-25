@@ -80,16 +80,7 @@
 
     },
     
-
-    "peerDependencies": {
     
-
-        
-
-    "crypto-pro-actual-cades-plugin": ">=2.4.1"
-    
-
-    },
     
 
     "devDependencies": {
