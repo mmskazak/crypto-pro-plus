@@ -1,10 +1,15 @@
 {
     "name": "@mmskazak/crypto-pro-plus",
     "type": "module",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Обёртка над cadesplugin для CryptoPro. Простая подпись, подпись с TSP, выбор сертификатов.",
     "main": "index.js",
-    "keywords": ["cryptopro", "cadesplugin", "gosuslugi", "электронная подпись"],
+    "keywords": [
+        "cryptopro",
+        "cadesplugin",
+        "gosuslugi",
+        "электронная подпись"
+    ],
     "author": "Михаил Мельников",
     "repository": "https://github.com/mmskazak/crypto-pro-plus",
     "license": "MIT"
