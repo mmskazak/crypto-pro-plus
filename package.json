@@ -1,7 +1,7 @@
 {
     "name": "@mmskazak/crypto-pro-plus",
     "type": "module",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "Обёртка над cadesplugin для CryptoPro. Простая подпись, подпись с TSP, выбор сертификатов.",
     "main": "index.js",
     "keywords": [
