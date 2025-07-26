@@ -95,14 +95,14 @@ console.log("Подпись с меткой времени:", signature);
 
 | Метод                                                 | Описание                                                                   |
 | ----------------------------------------------------- | -------------------------------------------------------------------------- |
-| `pluginVersion()`                                     | Возвращает версию установленного плагина                                   |
-| `countCertificates()`                                 | Считает количество сертификатов в личном хранилище                         |
-| `getCertificates()`                                   | Получает список сертификатов с SubjectName, Thumbprint, сроками и объектом |
-| `getCertificateByThumbprint(thumbprint)`              | Возвращает объект сертификата по отпечатку                                 |
-| `getCertificateInfo(cert)`                            | Возвращает подробную информацию о сертификате                              |
-| `signBase64Detached(base64, thumbprint)`              | Подпись без метки времени (CAdES-BES)                                      |
-| `signBase64WithTimestamp(base64, thumbprint, tspUrl)` | Подпись с меткой времени (CAdES-T)                                         |
-| `toBase64Unicode(str)`                                | Кодирует строку в корректный base64 с поддержкой Unicode                   |
+| pluginVersion()                                     | Возвращает версию установленного плагина                                   |
+| countCertificates()                                 | Считает количество сертификатов в личном хранилище                         |
+| getCertificates()                                   | Получает список сертификатов с SubjectName, Thumbprint, сроками и объектом |
+| getCertificateByThumbprint(thumbprint)              | Возвращает объект сертификата по отпечатку                                 |
+| getCertificateInfo(cert)                            | Возвращает подробную информацию о сертификате                              |
+| signBase64Detached(base64, thumbprint)              | Подпись без метки времени (CAdES-BES)                                      |
+| signBase64WithTimestamp(base64, thumbprint, tspUrl) | Подпись с меткой времени (CAdES-T)                                         |
+| toBase64Unicode(str)                                | Кодирует строку в корректный base64 с поддержкой Unicode                   |
 
 ---
 
