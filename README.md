@@ -1,8 +1,3 @@
-Вот обновлённый `README.md` с учётом всех реализованных функций:
-
----
-
-````markdown
 # @mmskazak/crypto-pro-plus
 
 📦 Современная обёртка над [CryptoPro CAdES plugin](https://www.cryptopro.ru/products/cades)  
@@ -14,7 +9,7 @@
 
 ```bash
 npm install @mmskazak/crypto-pro-plus
-````
+```
 
 > ⚠️ Требуется установленный [CryptoPro CSP](https://www.cryptopro.ru/products/csp) и плагин `cadesplugin`.
 
