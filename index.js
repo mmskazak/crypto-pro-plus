@@ -1,18 +1,18 @@
 // index.js
-import { cadesplugin } from "./cadesplugin-wrapper.js"; 
+import { cadesplugin } from './cadesplugin-wrapper.js'; 
 
   export async function pluginVersion() {
     try {
       // Ожидаем загрузки плагина
       await cadesplugin;
       // Пробуем создать объект "About"
-      const about = await cadesplugin.CreateObjectAsync("CAdESCOM.About");
+      const about = await cadesplugin.CreateObjectAsync('CAdESCOM.About');
       // Получаем версию плагина
       const version = await about.Version;
-      console.info("Плагин КриптоПро успешно загружен. Версия:", version);
+      console.info('Плагин КриптоПро успешно загружен. Версия:', version);
       return version;
     } catch (err) {
-      console.error("Ошибка при проверке статуса плагина:", err);
+      console.error('Ошибка при проверке статуса плагина:', err);
       return null;
     }
   }
@@ -21,15 +21,15 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
     try {
        // Ожидаем загрузки плагина
       await cadesplugin;
-      const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-      await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+      const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+      await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
       const certs = await store.Certificates;
       const count = await certs.Count;
-      console.log("Перечисление объектов плагина завершено. Найдено сертификатов:", count);
+      console.log('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
       await store.Close();
       return count;
     } catch (err) {
-      console.error("Ошибка при проверке плагина:", err);
+      console.error('Ошибка при проверке плагина:', err);
       return null;
     }
   }
@@ -37,15 +37,15 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
   export async function getCertificateByThumbprint(thumbprint) {
     await cadesplugin;
   
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
     const certs = await store.Certificates;
     const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
 
     const count = await foundCerts.Count;
     if (count === 0) {
       await store.Close();
-      console.log("Сертификат с указанным отпечатком не найден");
+      console.log('Сертификат с указанным отпечатком не найден');
       return null;
     }
 
@@ -76,13 +76,13 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
     await cadesplugin;
   
     // Создаём объект хранилища сертификатов
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
 
     // Открываем хранилище сертификатов текущего пользователя
     // "My" — это личное хранилище, CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED — максимальные права доступа
     await store.Open(
         cadesplugin.CADESCOM_CURRENT_USER_STORE,
-        "My",
+        'My',
         cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED
     );
   
@@ -120,17 +120,17 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
   export async function signBase64Detached(dataBase64, thumbprint) {
     await cadesplugin;
   
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
     const certs = await store.Certificates;
     const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await foundCerts.Item(1);
     await store.Close();
   
-    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
     await signer.propset_Certificate(cert);
   
-    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
     await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
     await signedData.propset_Content(dataBase64);
   
@@ -141,20 +141,20 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
   export async function signBase64DetachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
     await cadesplugin;
   
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
     const certs = await store.Certificates;
     const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await selectedCerts.Item(1);
     await store.Close();
   
-    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
     await signer.propset_Certificate(cert);
     await signer.propset_CheckCertificate(true); // проверка валидности сертификата
     // Установка адреса TSP-сервера
     await signer.propset_TSAAddress(tspUrl);
   
-    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
     await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
     await signedData.propset_Content(dataBase64);
   
@@ -165,17 +165,17 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
   export async function signBase64Attached(dataBase64, thumbprint) {
     await cadesplugin;
 
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
     const certs = await store.Certificates;
     const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await foundCerts.Item(1);
     await store.Close();
 
-    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
     await signer.propset_Certificate(cert);
 
-    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
     await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
     await signedData.propset_Content(dataBase64);
 
@@ -186,19 +186,19 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
   export async function signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
     await cadesplugin;
 
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
     const certs = await store.Certificates;
     const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await selectedCerts.Item(1);
     await store.Close();
 
-    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
     await signer.propset_Certificate(cert);
     await signer.propset_CheckCertificate(true);
     await signer.propset_TSAAddress(tspUrl);
 
-    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
     await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
     await signedData.propset_Content(dataBase64);
 
@@ -208,7 +208,7 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
 
   export function toBase64Unicode(str) {
     const utf8Bytes = new TextEncoder().encode(str);
-    let binary = "";
+    let binary = '';
     utf8Bytes.forEach(byte => {
       binary += String.fromCharCode(byte);
     });
