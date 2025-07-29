@@ -4,6 +4,11 @@
     "version": "0.1.14",
     "description": "Обёртка над cadesplugin для CryptoPro. Простая подпись, подпись с TSP, выбор сертификатов.",
     "main": "index.js",
+    "files": [
+        "index.js",
+        "cadesplugin-wrapper.js",
+        "cadesplugin_api.js"
+    ],
     "keywords": [
         "cryptopro",
         "cadesplugin",
