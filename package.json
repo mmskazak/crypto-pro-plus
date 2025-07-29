@@ -7,8 +7,15 @@
     "keywords": [
         "cryptopro",
         "cadesplugin",
-        "gosuslugi",
-        "электронная подпись"
+        "crypto sign",
+        "электронная подпись",
+        "CAdES",
+        "КриптоПро",
+        "tsa",
+        "timestamp",
+        "сертификаты",
+        "CryptoPro",
+        "cadesplugin_api"
     ],
     "author": "Михаил Мельников",
     "repository": "https://github.com/mmskazak/crypto-pro-plus",
