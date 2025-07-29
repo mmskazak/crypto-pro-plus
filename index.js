@@ -138,7 +138,7 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
     return signature;
   }
 
-  export async function signBase64WithTimestamp(dataBase64, thumbprint, tspUrl) {
+  export async function signBase64DetachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
     await cadesplugin;
   
     const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
@@ -161,6 +161,50 @@ import { cadesplugin } from "./cadesplugin-wrapper.js";
     const signature = await signedData.SignCades(signer, cadesplugin.CADESCOM_CADES_T, true);
     return signature;
   }
+
+  export async function signBase64Attached(dataBase64, thumbprint) {
+    await cadesplugin;
+
+    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const certs = await store.Certificates;
+    const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
+    const cert = await foundCerts.Item(1);
+    await store.Close();
+
+    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    await signer.propset_Certificate(cert);
+
+    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
+    await signedData.propset_Content(dataBase64);
+
+    const signature = await signedData.SignCades(signer, cadesplugin.CADESCOM_CADES_BES, false);
+  return signature;
+  }
+
+  export async function signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
+    await cadesplugin;
+
+    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, "My", cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const certs = await store.Certificates;
+    const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
+    const cert = await selectedCerts.Item(1);
+    await store.Close();
+
+    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+    await signer.propset_Certificate(cert);
+    await signer.propset_CheckCertificate(true);
+    await signer.propset_TSAAddress(tspUrl);
+
+    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    await signedData.propset_ContentEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
+    await signedData.propset_Content(dataBase64);
+
+    const signature = await signedData.SignCades(signer, cadesplugin.CADESCOM_CADES_T, false);
+    return signature;
+ }
 
   export function toBase64Unicode(str) {
     const utf8Bytes = new TextEncoder().encode(str);
