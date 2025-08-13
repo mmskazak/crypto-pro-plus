@@ -177,6 +177,79 @@ async function openCertificateStore() {
     return signature;
  }
 
+  export async function signGostHashDetached(hashBase64, thumbprint) {
+    const { store, certs } = await openCertificateStore();
+    const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
+    const cert = await foundCerts.Item(1);
+    await store.Close();
+
+    // Создаем объект для хеширования
+    const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
+    
+    // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
+    await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
+    
+    // Устанавливаем готовый хеш из base64
+    await hashObj.propset_Value(hashBase64);
+
+    // Создаем объект подписи
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
+    await signer.propset_Certificate(cert);
+
+    // Создаем объект для подписанных данных
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
+    
+    // Подписываем хеш
+    const signature = await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_BES);
+    return signature;
+  }
+
+  export async function signGostHashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl) {
+    const { store, certs } = await openCertificateStore();
+    const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
+    const cert = await selectedCerts.Item(1);
+    await store.Close();
+
+    // Создаем объект для хеширования
+    const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
+    
+    // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
+    await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
+    
+    // Устанавливаем готовый хеш из base64
+    await hashObj.propset_Value(hashBase64);
+
+    // Создаем объект подписи
+    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
+    await signer.propset_Certificate(cert);
+    await signer.propset_CheckCertificate(true); // проверка валидности сертификата
+    // Установка адреса TSP-сервера
+    await signer.propset_TSAAddress(tspUrl);
+
+    // Создаем объект для подписанных данных
+    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
+    
+    // Подписываем хеш с временной меткой
+    const signature = await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
+    return signature;
+  }
+
+  export async function createGostHash(dataBase64) {
+    // Создаем объект для хеширования
+    const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
+    
+    // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
+    await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
+    
+    // Устанавливаем данные для хеширования (base64)
+    await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
+    await hashObj.Hash(dataBase64);
+    
+    // Получаем значение хеша в base64
+    const hashValue = await hashObj.Value;
+    return hashValue;
+  }
+
   export function toBase64Unicode(str) {
     const utf8Bytes = new TextEncoder().encode(str);
     let binary = '';
