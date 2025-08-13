@@ -189,8 +189,8 @@ async function openCertificateStore() {
     // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
     await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
     
-    // Устанавливаем готовый хеш из base64
-    await hashObj.propset_Value(hashBase64);
+    await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
+    await hashObj.SetHashValue(hashBase64); // <-- вместо propset_Value
 
     // Создаем объект подписи
     const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
@@ -206,32 +206,24 @@ async function openCertificateStore() {
 
   export async function signGostHashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl) {
     const { store, certs } = await openCertificateStore();
-    const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-    const cert = await selectedCerts.Item(1);
+    const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
+    const cert = await foundCerts.Item(1);
     await store.Close();
-
-    // Создаем объект для хеширования
-    const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
-    
-    // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
+  
+    const hashObj = await cadesplugin.CreateObjectAsync("CAdESCOM.HashedData");
     await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
-    
-    // Устанавливаем готовый хеш из base64
-    await hashObj.propset_Value(hashBase64);
-
-    // Создаем объект подписи
-    const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
+    await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
+    await hashObj.SetHashValue(hashBase64);
+  
+    const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
     await signer.propset_Certificate(cert);
-    await signer.propset_CheckCertificate(true); // проверка валидности сертификата
-    // Установка адреса TSP-сервера
-    await signer.propset_TSAAddress(tspUrl);
-
-    // Создаем объект для подписанных данных
-    const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
-    
-    // Подписываем хеш с временной меткой
-    const signature = await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
-    return signature;
+  
+    // Ключевая строка: URL службы штампов времени (RFC 3161)
+    await signer.propset_TSAAddress(tspUrl); // свой TSA тут
+  
+    const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+    // Просим сразу CAdES-T (отсоединённая подпись хеша)
+    return await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
   }
 
   export async function createGostHash(dataBase64) {
