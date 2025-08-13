@@ -1,14 +1,14 @@
 // index.js
 import { cadesplugin } from './cadesplugin-wrapper.js'; 
 
-// Вспомогательная функция для открытия хранилища сертификатов
-async function openCertificateStore() {
-  await cadesplugin;
-  const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
-  await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
-  const certs = await store.Certificates;
-  return { store, certs };
-}
+  // Вспомогательная функция для открытия хранилища сертификатов
+  async function openCertificateStore() {
+    await cadesplugin;
+    const store = await cadesplugin.CreateObjectAsync('CAdESCOM.Store');
+    await store.Open(cadesplugin.CADESCOM_CURRENT_USER_STORE, 'My', cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+    const certs = await store.Certificates;
+    return { store, certs };
+  }
 
   export async function pluginVersion() {
     try {
