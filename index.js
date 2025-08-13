@@ -177,7 +177,7 @@ async function openCertificateStore() {
     return signature;
  }
 
-  export async function signGostHashDetached(hashBase64, thumbprint, hashedAlgorithm) {
+  export async function signGostHashDetached(hashBase64, thumbprint) {
     const { store, certs } = await openCertificateStore();
     const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await foundCerts.Item(1);
@@ -204,7 +204,7 @@ async function openCertificateStore() {
     return signature;
   }
 
-  export async function signGostHashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl, hashedAlgorithm) {
+  export async function signGostHashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl) {
     const { store, certs } = await openCertificateStore();
     const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
     const cert = await foundCerts.Item(1);
