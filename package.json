@@ -3,12 +3,20 @@
     "type": "module",
     "version": "0.1.19",
     "description": "Обёртка над cadesplugin для CryptoPro. Простая подпись, подпись с TSP, выбор сертификатов.",
-    "main": "index.js",
     "files": [
-        "index.js",
+        "src/",
         "cadesplugin-wrapper.js",
         "cadesplugin_api.js"
     ],
+    "exports": {
+        "./certificates": "./src/certificates.js",
+        "./signing": "./src/signing.js",
+        "./hashing": "./src/hashing.js",
+        "./hash-signing": "./src/hash-signing.js",
+        "./utils": "./src/utils.js",
+        "./common": "./src/common.js",
+        "./cadesplugin-wrapper": "./cadesplugin-wrapper.js"
+    },
     "keywords": [
         "cryptopro",
         "cadesplugin",

@@ -28,12 +28,54 @@ npm install @mmskazak/crypto-pro-plus
 
 ---
 
+## 🏗 Модульная структура
+
+Библиотека полностью организована по модульному принципу. Каждый модуль отвечает за свою область функциональности:
+
+```
+crypto-pro-plus/
+├── src/
+│   ├── common.js          # Общие функции (pluginVersion, openCertificateStore)
+│   ├── certificates.js    # Работа с сертификатами
+│   ├── signing.js         # Подпись данных (attached/detached)
+│   ├── hashing.js         # Создание хешей
+│   ├── hash-signing.js    # Подпись хешей
+│   └── utils.js           # Утилиты (toBase64Unicode)
+├── cadesplugin-wrapper.js
+└── cadesplugin_api.js
+```
+
+### Импорт модулей:
+
+```js
+// Работа с сертификатами
+import { getCertificates, getCertificateInfo } from '@mmskazak/crypto-pro-plus/certificates';
+
+// Подпись данных
+import { signBase64Detached } from '@mmskazak/crypto-pro-plus/signing';
+
+// Создание хешей
+import { createSHA256Hash, createGost2012_256Hash } from '@mmskazak/crypto-pro-plus/hashing';
+
+// Подпись хешей
+import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
+
+// Утилиты
+import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
+
+// Общие функции
+import { pluginVersion } from '@mmskazak/crypto-pro-plus/common';
+```
+
+---
+
 ## 📘 Примеры
 
 ### ✅ Проверка плагина
 
 ```js
-import { pluginVersion, countCertificates } from '@mmskazak/crypto-pro-plus';
+import { pluginVersion } from '@mmskazak/crypto-pro-plus/common';
+import { countCertificates } from '@mmskazak/crypto-pro-plus/certificates';
 
 const version = await pluginVersion();
 console.log("Версия плагина:", version);
@@ -47,7 +89,7 @@ console.log("Сертификатов найдено:", count);
 ### 📜 Получение всех сертификатов
 
 ```js
-import { getCertificates } from '@mmskazak/crypto-pro-plus';
+import { getCertificates } from '@mmskazak/crypto-pro-plus/certificates';
 
 const certs = await getCertificates();
 certs.forEach(cert => {
@@ -60,7 +102,7 @@ certs.forEach(cert => {
 ### 📄 Информация по сертификату
 
 ```js
-import { getCertificateByThumbprint, getCertificateInfo } from '@mmskazak/crypto-pro-plus';
+import { getCertificateByThumbprint, getCertificateInfo } from '@mmskazak/crypto-pro-plus/certificates';
 
 const cert = await getCertificateByThumbprint("DA9142...");
 const info = await getCertificateInfo(cert);
@@ -72,7 +114,8 @@ console.log(info);
 ### ✍️ Detached-подпись (без метки)
 
 ```js
-import { signBase64Detached, toBase64Unicode } from '@mmskazak/crypto-pro-plus';
+import { signBase64Detached } from '@mmskazak/crypto-pro-plus/signing';
+import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
 
 const data = toBase64Unicode("Данные для подписи");
 const signature = await signBase64Detached(data, "DA9142...");
@@ -84,7 +127,7 @@ console.log(signature);
 ### ⏱ Detached-подпись с меткой времени
 
 ```js
-import { signBase64DetachedWithTimestamp } from '@mmskazak/crypto-pro-plus';
+import { signBase64DetachedWithTimestamp } from '@mmskazak/crypto-pro-plus/signing';
 
 const signature = await signBase64DetachedWithTimestamp(data, "DA9142...", "http://testca.cryptopro.ru/tsp/");
 console.log(signature);
@@ -95,7 +138,7 @@ console.log(signature);
 ### 📎 Attached-подпись (встроенная)
 
 ```js
-import { signBase64Attached } from '@mmskazak/crypto-pro-plus';
+import { signBase64Attached } from '@mmskazak/crypto-pro-plus/signing';
 
 const signature = await signBase64Attached(data, "DA9142...");
 console.log(signature);
@@ -106,7 +149,7 @@ console.log(signature);
 ### 📎⏱ Attached-подпись с меткой времени
 
 ```js
-import { signBase64AttachedWithTimestamp } from '@mmskazak/crypto-pro-plus';
+import { signBase64AttachedWithTimestamp } from '@mmskazak/crypto-pro-plus/signing';
 
 const signature = await signBase64AttachedWithTimestamp(data, "DA9142...", "http://testca.cryptopro.ru/tsp/");
 console.log(signature);
@@ -121,9 +164,9 @@ import {
   createGost2012_256Hash,
   createSHA256Hash,
   createSHA512Hash,
-  createHash,
-  toBase64Unicode 
-} from '@mmskazak/crypto-pro-plus';
+  createHash
+} from '@mmskazak/crypto-pro-plus/hashing';
+import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
 
 const data = toBase64Unicode("Данные для хеширования");
 
@@ -137,7 +180,7 @@ const sha256Hash = await createSHA256Hash(data);
 const sha512Hash = await createSHA512Hash(data);
 
 // Универсальная функция с любым алгоритмом
-import { cadesplugin } from '@mmskazak/crypto-pro-plus/cadesplugin-wrapper.js';
+import { cadesplugin } from '@mmskazak/crypto-pro-plus/cadesplugin-wrapper';
 const customHash = await createHash(data, cadesplugin.CADESCOM_HASH_ALGORITHM_SHA_384);
 ```
 
@@ -150,7 +193,7 @@ import {
   signGost2012_256HashDetached,
   signSHA256HashDetached,
   signHashDetached
-} from '@mmskazak/crypto-pro-plus';
+} from '@mmskazak/crypto-pro-plus/hash-signing';
 
 // Подпись ГОСТ-хеша
 const gost256Signature = await signGost2012_256HashDetached(gost256Hash, "DA9142...");
@@ -159,7 +202,7 @@ const gost256Signature = await signGost2012_256HashDetached(gost256Hash, "DA9142
 const sha256Signature = await signSHA256HashDetached(sha256Hash, "DA9142...");
 
 // Универсальная функция
-import { cadesplugin } from '@mmskazak/crypto-pro-plus/cadesplugin-wrapper.js';
+import { cadesplugin } from '@mmskazak/crypto-pro-plus/cadesplugin-wrapper';
 const customSignature = await signHashDetached(
   customHash, 
   "DA9142...", 
@@ -176,7 +219,7 @@ import {
   signGost2012_256HashDetachedWithTimestamp,
   signSHA256HashDetachedWithTimestamp,
   signHashDetachedWithTimestamp
-} from '@mmskazak/crypto-pro-plus';
+} from '@mmskazak/crypto-pro-plus/hash-signing';
 
 // ГОСТ с меткой времени
 const gost256Signature = await signGost2012_256HashDetachedWithTimestamp(
@@ -193,6 +236,7 @@ const sha256Signature = await signSHA256HashDetachedWithTimestamp(
 );
 
 // Универсальная функция с меткой времени
+import { cadesplugin } from '@mmskazak/crypto-pro-plus/cadesplugin-wrapper';
 const customSignature = await signHashDetachedWithTimestamp(
   customHash, 
   "DA9142...", 
@@ -217,12 +261,7 @@ const customSignature = await signHashDetachedWithTimestamp(
 
 > **Примечание**: `*` означает, что доступны варианты как без метки времени, так и с меткой времени (`WithTimestamp`)
 
-### 🔄 Обратная совместимость
 
-Для обратной совместимости доступны алиасы старых функций:
-- `createGostHash` → `createGost2012_256Hash`
-- `signGostHashDetached` → `signGost2012_256HashDetached`
-- `signGostHashDetachedWithTimestamp` → `signGost2012_256HashDetachedWithTimestamp`
 
 ---
 
