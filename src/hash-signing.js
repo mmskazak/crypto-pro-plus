@@ -48,32 +48,9 @@ export async function signHashDetachedWithTimestamp(hashBase64, thumbprint, algo
   return await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
 }
 
-// Специализированные функции для ГОСТ 2012-256
+// Алиасы для ГОСТ 2012-256
 export async function signGost2012_256HashDetached(hashBase64, thumbprint) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
-
-  // Создаем объект для хеширования
-  const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
-  
-  // Устанавливаем алгоритм ГОСТ Р 34.11-2012 256 бит
-  await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
-  
-  await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
-  await hashObj.SetHashValue(hashBase64); // <-- вместо propset_Value
-
-  // Создаем объект подписи
-  const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
-  await signer.propset_Certificate(cert);
-
-  // Создаем объект для подписанных данных
-  const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
-  
-  // Подписываем хеш
-  const signature = await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_BES);
-  return signature;
+  return signHashDetached(hashBase64, thumbprint, cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
 }
 
 export async function signGost2012_256HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl) {
