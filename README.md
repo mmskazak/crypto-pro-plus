@@ -35,23 +35,23 @@ npm install @mmskazak/crypto-pro-plus
 
 Библиотека полностью организована по модульному принципу. Каждый модуль отвечает за свою область функциональности:
 
-```
+```text
 crypto-pro-plus/
 ├── src/
-│   ├── common.js          # Общие функции (pluginVersion, openCertificateStore)
-│   ├── certificates.js    # Работа с сертификатами
-│   ├── signing.js         # Подпись данных (attached/detached)
+│   ├── common.js           # Общие функции (pluginVersion, openCertificateStore)
+│   ├── certificates.js     # Работа с сертификатами
+│   ├── signing.js          # Подпись данных (attached/detached)
 │   ├── multiple-signing.js # Множественные подписи (коллективные, последовательные)
-│   ├── hashing.js         # Создание хешей
-│   ├── hash-signing.js    # Подпись хешей
-│   ├── verification.js    # Проверка подписей
-│   ├── countersigning.js  # Контрподписи
-│   └── utils.js           # Утилиты (toBase64Unicode)
+│   ├── hashing.js          # Создание хешей
+│   ├── hash-signing.js     # Подпись хешей
+│   ├── verification.js     # Проверка подписей
+│   ├── countersigning.js   # Контрподписи
+│   └── utils.js            # Утилиты (toBase64Unicode)
 ├── cadesplugin-wrapper.js
 └── cadesplugin_api.js
 ```
 
-### Импорт модулей:
+### Импорт модулей
 
 ```js
 // Работа с сертификатами
@@ -70,7 +70,7 @@ import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
 import { verifyDetachedSignature } from '@mmskazak/crypto-pro-plus/verification';
 
 // Множественные подписи
-import { coSignBase64, createCollectiveSignature, createWorkflowSignature } from '@mmskazak/crypto-pro-plus/multiple-signing';
+import { coSignBase64, createCollectiveSignature, createSequentialSignature } from '@mmskazak/crypto-pro-plus/multiple-signing';
 
 // Контрподписи
 import { counterSign } from '@mmskazak/crypto-pro-plus/countersigning';
@@ -380,16 +380,16 @@ const collectiveSignature = await createCollectiveSignature(
   "http://testca.cryptopro.ru/tsp/" // опционально TSP для всех
 );
 
-// Workflow подпись (цепочка: каждый подписывает результат предыдущего)
+// Последовательная подпись (цепочка: каждый подписывает результат предыдущего)
 const signers = [
   { thumbprint: "manager_cert", tspUrl: "http://testca.cryptopro.ru/tsp/" },
   { thumbprint: "director_cert", tspUrl: "http://testca.cryptopro.ru/tsp/" },
   { thumbprint: "accountant_cert" } // без TSP
 ];
 
-const workflowResult = await createWorkflowSignature(originalData, signers, true);
-console.log('Финальная подпись:', workflowResult.signature);
-console.log('История подписания:', workflowResult.history);
+const sequentialResult = await createSequentialSignature(originalData, signers, true);
+console.log('Финальная подпись:', sequentialResult.signature);
+console.log('История подписания:', sequentialResult.history);
 ```
 
 ---
@@ -452,8 +452,6 @@ counterSignersInfo.forEach(info => {
 
 > **Примечание**: `*` означает, что доступны варианты как без метки времени, так и с меткой времени (`WithTimestamp`)
 
-
-
 ---
 
 ## 📌 API
@@ -474,7 +472,6 @@ counterSignersInfo.forEach(info => {
 | signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl)  | Attached-подпись с меткой времени (CAdES-T)                                |
 | signWithCertificateSelection(dataBase64, isDetached, tspUrl)     | Подпись с выбором сертификата через диалог                                |
 | signWithValidation(dataBase64, thumbprint, isDetached, tspUrl)   | Безопасное подписание с проверкой сертификата                             |
-
 | **Функции хеширования**                                         |                                                                            |
 | createHash(dataBase64, algorithm)                               | Универсальная функция создания хеша с любым алгоритмом                     |
 | createGost2012_256Hash(dataBase64)                               | Создает ГОСТ-хеш данных (ГОСТ Р 34.11-2012 256 бит)                       |
@@ -505,9 +502,8 @@ counterSignersInfo.forEach(info => {
 | coSignBase64(dataBase64, existingSignature, thumbprint, isDetached) | Добавляет соподпись к существующей подписи                             |
 | coSignBase64WithTimestamp(dataBase64, existingSignature, thumbprint, tspUrl, isDetached) | Добавляет соподпись с меткой времени |
 | createCollectiveSignature(dataBase64, thumbprints, isDetached, tspUrl) | Создает коллективную подпись (все подписывают исходные данные)    |
-| createWorkflowSignature(dataBase64, signers, isDetached)          | Создает workflow подпись (цепочка согласования)                     |
+| createSequentialSignature(dataBase64, signers, isDetached)       | Создает последовательную подпись (цепочка подписей)                |
 | createMultipleSignature(dataBase64, thumbprints, isDetached, tspUrl) | Алиас для createCollectiveSignature (обратная совместимость)      |
-| createSequentialSignature(dataBase64, signers, isDetached)       | Алиас для createWorkflowSignature (обратная совместимость)         |
 | **Функции проверки подписей**                                   |                                                                            |
 | verifyDetachedSignature(dataBase64, signatureBase64, checkCert)  | Проверяет detached подпись CAdES                                          |
 | verifyAttachedSignature(signatureBase64, checkCert)              | Проверяет attached подпись CAdES                                          |
