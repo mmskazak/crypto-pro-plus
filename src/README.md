@@ -35,6 +35,14 @@
 - `signHashDetachedWithTimestamp()` - универсальная подпись хеша с меткой времени
 - Специализированные функции для разных алгоритмов хеширования
 
+### `verification.js`
+Функции для проверки подписей
+- `verifyDetachedSignature()` - проверка detached подписи
+- `verifyAttachedSignature()` - проверка attached подписи
+- `verifyTimestampedSignature()` - проверка подписи с меткой времени
+- `getSignersInfo()` - получение информации о подписчиках
+- `verifySignature()` - универсальная проверка
+
 ### `utils.js`
 Утилитарные функции
 - `toBase64Unicode()` - конвертация строк в base64
@@ -55,6 +63,9 @@ import { signBase64Detached } from '@mmskazak/crypto-pro-plus/signing';
 
 // Подпись хешей
 import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
+
+// Проверка подписей
+import { verifyDetachedSignature } from '@mmskazak/crypto-pro-plus/verification';
 
 // Утилиты
 import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';

@@ -22,6 +22,7 @@ npm install @mmskazak/crypto-pro-plus
 * 🧾 Получение информации по сертификату
 * ✍️ Detached/Attached подпись (CAdES-BES)
 * ⏱ Подпись с меткой времени (CAdES-T)
+* ✅ Проверка валидности цифровых подписей (включая множественные подписи)
 * 🔐 Создание хешей (SHA-1/256/384/512, ГОСТ Р 34.11-94/2012-256/2012-512)
 * ✍️ Подпись хешей любых алгоритмов (detached с поддержкой меток времени)
 * 🔄 Конвертация Unicode-строк в корректный base64
@@ -40,6 +41,7 @@ crypto-pro-plus/
 │   ├── signing.js         # Подпись данных (attached/detached)
 │   ├── hashing.js         # Создание хешей
 │   ├── hash-signing.js    # Подпись хешей
+│   ├── verification.js    # Проверка подписей
 │   └── utils.js           # Утилиты (toBase64Unicode)
 ├── cadesplugin-wrapper.js
 └── cadesplugin_api.js
@@ -59,6 +61,9 @@ import { createSHA256Hash, createGost2012_256Hash } from '@mmskazak/crypto-pro-p
 
 // Подпись хешей
 import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
+
+// Проверка подписей
+import { verifyDetachedSignature } from '@mmskazak/crypto-pro-plus/verification';
 
 // Утилиты
 import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
@@ -247,6 +252,51 @@ const customSignature = await signHashDetachedWithTimestamp(
 
 ---
 
+### ✅ Проверка подписей
+
+```js
+import { 
+  verifyDetachedSignature, 
+  verifyAttachedSignature,
+  verifyTimestampedSignature,
+  getSignersInfo 
+} from '@mmskazak/crypto-pro-plus/verification';
+
+// Проверка detached подписи
+const isValidDetached = await verifyDetachedSignature(originalData, signature);
+console.log('Detached подпись валидна:', isValidDetached);
+
+// Проверка attached подписи
+const attachedResult = await verifyAttachedSignature(signedMessage);
+console.log('Attached подпись валидна:', attachedResult.isValid);
+if (attachedResult.isValid) {
+  console.log('Извлеченные данные:', attachedResult.content);
+}
+
+// Проверка подписи с меткой времени
+const timestampResult = await verifyTimestampedSignature(originalData, signature, true);
+console.log('Подпись с меткой времени валидна:', timestampResult.isValid);
+if (timestampResult.timestampInfo) {
+  console.log('Время подписи:', timestampResult.timestampInfo.signingTime);
+}
+
+// Получение информации о всех подписчиках (может быть несколько!)
+const signersInfo = await getSignersInfo(signature, true, originalData);
+console.log(`Найдено подписчиков: ${signersInfo.length}`);
+
+signersInfo.forEach((signer, index) => {
+  console.log(`\n--- Подписчик ${index + 1} ---`);
+  console.log('Имя:', signer.subjectName);
+  console.log('Издатель сертификата:', signer.issuerName);
+  console.log('Отпечаток сертификата:', signer.thumbprint);
+  console.log('Время подписи:', signer.signingTime);
+  console.log('Сертификат действителен с:', signer.validFromDate);
+  console.log('Сертификат действителен до:', signer.validToDate);
+});
+```
+
+---
+
 ## 🔐 Поддерживаемые алгоритмы хеширования
 
 | Алгоритм | Константа | Функции |
@@ -304,6 +354,12 @@ const customSignature = await signHashDetachedWithTimestamp(
 | signGost2012_512HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl)| Detached-подпись ГОСТ 2012-512 хеша с меткой времени            |
 | signGost94HashDetached(hashBase64, thumbprint)                   | Detached-подпись ГОСТ-94 хеша без метки времени                            |
 | signGost94HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl)| Detached-подпись ГОСТ-94 хеша с меткой времени                           |
+| **Функции проверки подписей**                                   |                                                                            |
+| verifyDetachedSignature(dataBase64, signatureBase64, checkCert)  | Проверяет detached подпись CAdES                                          |
+| verifyAttachedSignature(signatureBase64, checkCert)              | Проверяет attached подпись CAdES                                          |
+| verifyTimestampedSignature(dataBase64, signatureBase64, isDetached)| Проверяет подпись с меткой времени CAdES-T                               |
+| getSignersInfo(signatureBase64, isDetached, dataBase64)          | Получает информацию о всех подписчиках (поддержка множественных подписей) |
+| verifySignature(signatureBase64, options)                        | Универсальная функция проверки подписи                                    |
 | **Утилиты**                                                     |                                                                            |
 | toBase64Unicode(str)                                             | Кодирует строку в корректный base64 с поддержкой Unicode                   |
 

@@ -13,6 +13,7 @@
         "./signing": "./src/signing.js",
         "./hashing": "./src/hashing.js",
         "./hash-signing": "./src/hash-signing.js",
+        "./verification": "./src/verification.js",
         "./utils": "./src/utils.js",
         "./common": "./src/common.js",
         "./cadesplugin-wrapper": "./cadesplugin-wrapper.js"
