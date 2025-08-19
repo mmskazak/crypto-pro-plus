@@ -172,6 +172,51 @@ console.log(signature);
 
 ---
 
+### 🎯 Подпись с выбором сертификата
+
+```js
+import { signWithCertificateSelection } from '@mmskazak/crypto-pro-plus/signing';
+import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
+
+const data = toBase64Unicode("Важный документ");
+
+// Пользователю покажется диалог выбора сертификата
+const result = await signWithCertificateSelection(
+  data, 
+  true, // isDetached
+  "http://testca.cryptopro.ru/tsp/" // опционально TSP
+);
+
+console.log('Подпись:', result.signature);
+console.log('Сертификат:', result.certificateInfo.subjectName);
+console.log('Предупреждения:', result.certificateInfo.warnings);
+```
+
+---
+
+### 🛡️ Безопасное подписание с проверкой
+
+```js
+import { signWithValidation, validateCertificateForSigning } from '@mmskazak/crypto-pro-plus/signing';
+
+// Сначала проверим сертификат
+const validation = await validateCertificateForSigning("DA9142...");
+if (!validation.isValid) {
+  console.error('Сертификат недействителен:', validation.reason);
+  return;
+}
+
+// Подписываем с проверкой
+try {
+  const result = await signWithValidation(data, "DA9142...", true);
+  console.log('Подпись создана:', result.signature);
+} catch (error) {
+  console.error('Ошибка подписания:', error.message);
+}
+```
+
+---
+
 ### 🔐 Создание хешей
 
 ```js
@@ -420,10 +465,15 @@ counterSignersInfo.forEach(info => {
 | getCertificates()                                                | Получает список сертификатов с SubjectName, Thumbprint, сроками и объектом |
 | getCertificateByThumbprint(thumbprint)                           | Возвращает объект сертификата по отпечатку                                 |
 | getCertificateInfo(cert)                                         | Возвращает подробную информацию о сертификате                              |
+| selectCertificateFromDialog(title)                               | Показывает диалог выбора сертификата пользователю                         |
+| getValidCertificates()                                           | Получает список всех действующих сертификатов                             |
+| validateCertificateForSigning(thumbprint)                       | Проверяет может ли сертификат использоваться для подписания               |
 | signBase64Detached(dataBase64, thumbprint)                       | Detached-подпись без метки времени (CAdES-BES)                             |
 | signBase64DetachedWithTimestamp(dataBase64, thumbprint, tspUrl)  | Detached-подпись с меткой времени (CAdES-T)                                |
 | signBase64Attached(dataBase64, thumbprint)                       | Attached-подпись без метки времени (CAdES-BES)                             |
 | signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl)  | Attached-подпись с меткой времени (CAdES-T)                                |
+| signWithCertificateSelection(dataBase64, isDetached, tspUrl)     | Подпись с выбором сертификата через диалог                                |
+| signWithValidation(dataBase64, thumbprint, isDetached, tspUrl)   | Безопасное подписание с проверкой сертификата                             |
 
 | **Функции хеширования**                                         |                                                                            |
 | createHash(dataBase64, algorithm)                               | Универсальная функция создания хеша с любым алгоритмом                     |
