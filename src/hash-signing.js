@@ -77,25 +77,7 @@ export async function signGost2012_256HashDetached(hashBase64, thumbprint) {
 }
 
 export async function signGost2012_256HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
-
-  const hashObj = await cadesplugin.CreateObjectAsync("CAdESCOM.HashedData");
-  await hashObj.propset_Algorithm(cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256);
-  await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
-  await hashObj.SetHashValue(hashBase64);
-
-  const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
-  await signer.propset_Certificate(cert);
-
-  // Ключевая строка: URL службы штампов времени (RFC 3161)
-  await signer.propset_TSAAddress(tspUrl); // свой TSA тут
-
-  const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
-  // Просим сразу CAdES-T (отсоединённая подпись хеша)
-  return await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
+  return signHashDetachedWithTimestamp(hashBase64, thumbprint, cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256, tspUrl);
 }
 
 
