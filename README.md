@@ -22,6 +22,8 @@ npm install @mmskazak/crypto-pro-plus
 * 🧾 Получение информации по сертификату
 * ✍️ Detached/Attached подпись (CAdES-BES)
 * ⏱ Подпись с меткой времени (CAdES-T)
+* 👥 Множественные подписи (коллективные, последовательные)
+* 🛡️ Контрподписи (заверение подписей)
 * ✅ Проверка валидности цифровых подписей (включая множественные подписи)
 * 🔐 Создание хешей (SHA-1/256/384/512, ГОСТ Р 34.11-94/2012-256/2012-512)
 * ✍️ Подпись хешей любых алгоритмов (detached с поддержкой меток времени)
@@ -39,9 +41,11 @@ crypto-pro-plus/
 │   ├── common.js          # Общие функции (pluginVersion, openCertificateStore)
 │   ├── certificates.js    # Работа с сертификатами
 │   ├── signing.js         # Подпись данных (attached/detached)
+│   ├── multiple-signing.js # Множественные подписи (коллективные, последовательные)
 │   ├── hashing.js         # Создание хешей
 │   ├── hash-signing.js    # Подпись хешей
 │   ├── verification.js    # Проверка подписей
+│   ├── countersigning.js  # Контрподписи
 │   └── utils.js           # Утилиты (toBase64Unicode)
 ├── cadesplugin-wrapper.js
 └── cadesplugin_api.js
@@ -64,6 +68,12 @@ import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
 
 // Проверка подписей
 import { verifyDetachedSignature } from '@mmskazak/crypto-pro-plus/verification';
+
+// Множественные подписи
+import { coSignBase64, createCollectiveSignature, createWorkflowSignature } from '@mmskazak/crypto-pro-plus/multiple-signing';
+
+// Контрподписи
+import { counterSign } from '@mmskazak/crypto-pro-plus/countersigning';
 
 // Утилиты
 import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';
@@ -297,6 +307,92 @@ signersInfo.forEach((signer, index) => {
 
 ---
 
+### 👥 Множественные подписи
+
+```js
+import { 
+  coSignBase64,
+  coSignBase64WithTimestamp,
+  createMultipleSignature,
+  createSequentialSignature 
+} from '@mmskazak/crypto-pro-plus/multiple-signing';
+
+// Добавление соподписи к существующей подписи
+const coSignedData = await coSignBase64(
+  originalData,
+  existingSignature,
+  secondSignerThumbprint,
+  true // isDetached
+);
+
+// Создание коллективной подписи сразу несколькими подписчиками
+const thumbprints = ["cert1_thumbprint", "cert2_thumbprint", "cert3_thumbprint"];
+// Коллективная подпись (все подписывают исходные данные одновременно)
+const collectiveSignature = await createCollectiveSignature(
+  originalData,
+  thumbprints,
+  true, // isDetached
+  "http://testca.cryptopro.ru/tsp/" // опционально TSP для всех
+);
+
+// Workflow подпись (цепочка: каждый подписывает результат предыдущего)
+const signers = [
+  { thumbprint: "manager_cert", tspUrl: "http://testca.cryptopro.ru/tsp/" },
+  { thumbprint: "director_cert", tspUrl: "http://testca.cryptopro.ru/tsp/" },
+  { thumbprint: "accountant_cert" } // без TSP
+];
+
+const workflowResult = await createWorkflowSignature(originalData, signers, true);
+console.log('Финальная подпись:', workflowResult.signature);
+console.log('История подписания:', workflowResult.history);
+```
+
+---
+
+### 🛡️ Контрподписи (заверение подписей)
+
+```js
+import { 
+  counterSign,
+  counterSignBySigner,
+  counterSignAll,
+  getCounterSignersInfo
+} from '@mmskazak/crypto-pro-plus/countersigning';
+
+// Создание контрподписи (заверение первого подписчика)
+const counterSignedData = await counterSign(
+  existingSignature,
+  notaryThumbprint,
+  "http://testca.cryptopro.ru/tsp/" // опционально
+);
+
+// Контрподпись конкретного подписчика (по индексу)
+const counterSignedSpecific = await counterSignBySigner(
+  existingSignature,
+  notaryThumbprint,
+  2, // индекс подписчика
+  "http://testca.cryptopro.ru/tsp/"
+);
+
+// Контрподпись всех подписчиков
+const counterSignedAll = await counterSignAll(
+  existingSignature,
+  notaryThumbprint,
+  "http://testca.cryptopro.ru/tsp/"
+);
+
+// Получение информации о контрподписях
+const counterSignersInfo = await getCounterSignersInfo(signature, originalData, true);
+counterSignersInfo.forEach(info => {
+  console.log(`Подписчик: ${info.signerName}`);
+  info.counterSignatures.forEach(cs => {
+    console.log(`  Заверил: ${cs.counterSignerName} в ${cs.counterSigningTime}`);
+  });
+});
+```
+
+---
+
 ## 🔐 Поддерживаемые алгоритмы хеширования
 
 | Алгоритм | Константа | Функции |
@@ -328,6 +424,7 @@ signersInfo.forEach((signer, index) => {
 | signBase64DetachedWithTimestamp(dataBase64, thumbprint, tspUrl)  | Detached-подпись с меткой времени (CAdES-T)                                |
 | signBase64Attached(dataBase64, thumbprint)                       | Attached-подпись без метки времени (CAdES-BES)                             |
 | signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl)  | Attached-подпись с меткой времени (CAdES-T)                                |
+
 | **Функции хеширования**                                         |                                                                            |
 | createHash(dataBase64, algorithm)                               | Универсальная функция создания хеша с любым алгоритмом                     |
 | createGost2012_256Hash(dataBase64)                               | Создает ГОСТ-хеш данных (ГОСТ Р 34.11-2012 256 бит)                       |
@@ -354,12 +451,24 @@ signersInfo.forEach((signer, index) => {
 | signGost2012_512HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl)| Detached-подпись ГОСТ 2012-512 хеша с меткой времени            |
 | signGost94HashDetached(hashBase64, thumbprint)                   | Detached-подпись ГОСТ-94 хеша без метки времени                            |
 | signGost94HashDetachedWithTimestamp(hashBase64, thumbprint, tspUrl)| Detached-подпись ГОСТ-94 хеша с меткой времени                           |
+| **Функции множественных подписей**                              |                                                                            |
+| coSignBase64(dataBase64, existingSignature, thumbprint, isDetached) | Добавляет соподпись к существующей подписи                             |
+| coSignBase64WithTimestamp(dataBase64, existingSignature, thumbprint, tspUrl, isDetached) | Добавляет соподпись с меткой времени |
+| createCollectiveSignature(dataBase64, thumbprints, isDetached, tspUrl) | Создает коллективную подпись (все подписывают исходные данные)    |
+| createWorkflowSignature(dataBase64, signers, isDetached)          | Создает workflow подпись (цепочка согласования)                     |
+| createMultipleSignature(dataBase64, thumbprints, isDetached, tspUrl) | Алиас для createCollectiveSignature (обратная совместимость)      |
+| createSequentialSignature(dataBase64, signers, isDetached)       | Алиас для createWorkflowSignature (обратная совместимость)         |
 | **Функции проверки подписей**                                   |                                                                            |
 | verifyDetachedSignature(dataBase64, signatureBase64, checkCert)  | Проверяет detached подпись CAdES                                          |
 | verifyAttachedSignature(signatureBase64, checkCert)              | Проверяет attached подпись CAdES                                          |
 | verifyTimestampedSignature(dataBase64, signatureBase64, isDetached)| Проверяет подпись с меткой времени CAdES-T                               |
 | getSignersInfo(signatureBase64, isDetached, dataBase64)          | Получает информацию о всех подписчиках (поддержка множественных подписей) |
 | verifySignature(signatureBase64, options)                        | Универсальная функция проверки подписи                                    |
+| **Функции контрподписей**                                       |                                                                            |
+| counterSign(existingSignature, thumbprint, tspUrl)               | Создает контрподпись (заверение подписи)                                  |
+| counterSignBySigner(existingSignature, thumbprint, signerIndex, tspUrl) | Контрподпись конкретного подписчика                              |
+| counterSignAll(existingSignature, thumbprint, tspUrl)            | Контрподпись всех подписчиков                                             |
+| getCounterSignersInfo(signatureBase64, dataBase64, isDetached)   | Получает информацию о контрподписях                                       |
 | **Утилиты**                                                     |                                                                            |
 | toBase64Unicode(str)                                             | Кодирует строку в корректный base64 с поддержкой Unicode                   |
 

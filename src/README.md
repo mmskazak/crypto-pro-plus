@@ -17,11 +17,20 @@
 - `getCertificates()` - получение списка всех сертификатов
 
 ### `signing.js`
-Функции для подписи данных
+Функции для простой подписи данных
 - `signBase64Detached()` - отсоединенная подпись
 - `signBase64DetachedWithTimestamp()` - отсоединенная подпись с меткой времени
 - `signBase64Attached()` - встроенная подпись
 - `signBase64AttachedWithTimestamp()` - встроенная подпись с меткой времени
+
+### `multiple-signing.js`
+Функции для множественных подписей
+- `coSignBase64()` - добавление соподписи
+- `coSignBase64WithTimestamp()` - соподпись с меткой времени
+- `createCollectiveSignature()` - коллективная подпись (все подписывают исходные данные)
+- `createWorkflowSignature()` - workflow подпись (цепочка согласования)
+- `createMultipleSignature()` - алиас для createCollectiveSignature
+- `createSequentialSignature()` - алиас для createWorkflowSignature
 
 ### `hashing.js`
 Функции для создания хешей
@@ -42,6 +51,13 @@
 - `verifyTimestampedSignature()` - проверка подписи с меткой времени
 - `getSignersInfo()` - получение информации о подписчиках
 - `verifySignature()` - универсальная проверка
+
+### `countersigning.js`
+Функции для контрподписей
+- `counterSign()` - создание контрподписи
+- `counterSignBySigner()` - контрподпись конкретного подписчика
+- `counterSignAll()` - контрподпись всех подписчиков
+- `getCounterSignersInfo()` - информация о контрподписях
 
 ### `utils.js`
 Утилитарные функции
@@ -66,6 +82,12 @@ import { signSHA256HashDetached } from '@mmskazak/crypto-pro-plus/hash-signing';
 
 // Проверка подписей
 import { verifyDetachedSignature } from '@mmskazak/crypto-pro-plus/verification';
+
+// Множественные подписи
+import { coSignBase64, createMultipleSignature } from '@mmskazak/crypto-pro-plus/multiple-signing';
+
+// Контрподписи
+import { counterSign } from '@mmskazak/crypto-pro-plus/countersigning';
 
 // Утилиты
 import { toBase64Unicode } from '@mmskazak/crypto-pro-plus/utils';

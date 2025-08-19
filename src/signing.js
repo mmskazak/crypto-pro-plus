@@ -1,12 +1,12 @@
 // src/signing.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
-import { openCertificateStore } from './common.js';
+import { getCertificateByThumbprint } from './certificates.js';
 
 export async function signBase64Detached(dataBase64, thumbprint) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
   await signer.propset_Certificate(cert);
@@ -20,10 +20,10 @@ export async function signBase64Detached(dataBase64, thumbprint) {
 }
 
 export async function signBase64DetachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
-  const { store, certs } = await openCertificateStore();
-  const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await selectedCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
   await signer.propset_Certificate(cert);
@@ -40,10 +40,10 @@ export async function signBase64DetachedWithTimestamp(dataBase64, thumbprint, ts
 }
 
 export async function signBase64Attached(dataBase64, thumbprint) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
   await signer.propset_Certificate(cert);
@@ -57,10 +57,10 @@ return signature;
 }
 
 export async function signBase64AttachedWithTimestamp(dataBase64, thumbprint, tspUrl) {
-  const { store, certs } = await openCertificateStore();
-  const selectedCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await selectedCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
   await signer.propset_Certificate(cert);

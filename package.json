@@ -11,9 +11,11 @@
     "exports": {
         "./certificates": "./src/certificates.js",
         "./signing": "./src/signing.js",
+        "./multiple-signing": "./src/multiple-signing.js",
         "./hashing": "./src/hashing.js",
         "./hash-signing": "./src/hash-signing.js",
         "./verification": "./src/verification.js",
+        "./countersigning": "./src/countersigning.js",
         "./utils": "./src/utils.js",
         "./common": "./src/common.js",
         "./cadesplugin-wrapper": "./cadesplugin-wrapper.js"

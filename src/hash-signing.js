@@ -1,12 +1,12 @@
 // src/hash-signing.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
-import { openCertificateStore } from './common.js';
+import { getCertificateByThumbprint } from './certificates.js';
 
 export async function signHashDetached(hashBase64, thumbprint, algorithm) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   // Создаем объект для хеширования
   const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
@@ -30,10 +30,10 @@ export async function signHashDetached(hashBase64, thumbprint, algorithm) {
 }
 
 export async function signHashDetachedWithTimestamp(hashBase64, thumbprint, algorithm, tspUrl) {
-  const { store, certs } = await openCertificateStore();
-  const foundCerts = await certs.Find(cadesplugin.CAPICOM_CERTIFICATE_FIND_SHA1_HASH, thumbprint);
-  const cert = await foundCerts.Item(1);
-  await store.Close();
+  const cert = await getCertificateByThumbprint(thumbprint);
+  if (!cert) {
+    throw new Error('Сертификат с указанным отпечатком не найден');
+  }
 
   const hashObj = await cadesplugin.CreateObjectAsync("CAdESCOM.HashedData");
   await hashObj.propset_Algorithm(algorithm);
