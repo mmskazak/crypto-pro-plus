@@ -57,8 +57,6 @@ export async function signGost2012_256HashDetachedWithTimestamp(hashBase64, thum
   return signHashDetachedWithTimestamp(hashBase64, thumbprint, cadesplugin.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256, tspUrl);
 }
 
-
-
 // Алиасы для подписи конкретных типов хешей
 export async function signSHA1HashDetached(hashBase64, thumbprint) {
   return signHashDetached(hashBase64, thumbprint, cadesplugin.CADESCOM_HASH_ALGORITHM_SHA1);
