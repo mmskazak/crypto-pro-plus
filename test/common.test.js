@@ -36,9 +36,8 @@ describe('pluginVersion', () => {
     expect(version).toBe('5.0.11813.0');
   });
 
-  it('returns null and swallows the error when the plugin is unavailable', async () => {
+  it('propagates the error when the plugin is unavailable', async () => {
     mockState.current.cadesplugin.CreateObjectAsync.mockRejectedValueOnce(new Error('plugin not installed'));
-    const version = await pluginVersion();
-    expect(version).toBeNull();
+    await expect(pluginVersion()).rejects.toThrow('plugin not installed');
   });
 });

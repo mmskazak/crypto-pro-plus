@@ -35,10 +35,9 @@ describe('countCertificates', () => {
     expect(mockState.current.store.Close).toHaveBeenCalled();
   });
 
-  it('returns null and logs an error when the store cannot be opened', async () => {
+  it('propagates the error when the store cannot be opened', async () => {
     mockState.current.store.Open.mockRejectedValueOnce(new Error('no CryptoPro CSP'));
-    const count = await countCertificates();
-    expect(count).toBeNull();
+    await expect(countCertificates()).rejects.toThrow('no CryptoPro CSP');
   });
 });
 

@@ -3,16 +3,11 @@ import { cadesplugin } from '../cadesplugin-wrapper.js';
 import { openCertificateStore } from './common.js';
 
 export async function countCertificates() {
-  try {
-    const { store, certs } = await openCertificateStore();
-    const count = await certs.Count;
-    console.log('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
-    await store.Close();
-    return count;
-  } catch (err) {
-    console.error('Ошибка при проверке плагина:', err);
-    return null;
-  }
+  const { store, certs } = await openCertificateStore();
+  const count = await certs.Count;
+  console.log('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
+  await store.Close();
+  return count;
 }
 
 export async function getCertificateByThumbprint(thumbprint) {
