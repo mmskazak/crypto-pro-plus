@@ -192,7 +192,7 @@ export async function getCounterSignersInfo(signatureBase64, dataBase64 = null, 
           
           counterSignersInfo.push(signerInfo);
         }
-      } catch (err) {
+      } catch {
         // У данного подписчика нет контрподписей
         continue;
       }

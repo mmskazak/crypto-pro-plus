@@ -85,7 +85,7 @@ export async function getCertificates() {
  * @param {string} title - Заголовок диалога (опционально)
  * @returns {Promise<Object|null>} - Выбранный сертификат или null при отмене
  */
-export async function selectCertificateFromDialog(title = "Выберите сертификат для подписания") {
+export async function selectCertificateFromDialog(title = 'Выберите сертификат для подписания') {
   try {
     const { store, certs } = await openCertificateStore();
     
@@ -93,7 +93,7 @@ export async function selectCertificateFromDialog(title = "Выберите се
     const selectedCerts = await certs.Select(
       cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED,
       title,
-      "Выберите сертификат из списка:",
+      'Выберите сертификат из списка:',
       false // только один сертификат
     );
     

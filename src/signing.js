@@ -84,7 +84,7 @@ export async function signBase64AttachedWithTimestamp(dataBase64, thumbprint, ts
  */
 export async function signWithCertificateSelection(dataBase64, isDetached = true, tspUrl = null) {
   // Показываем диалог выбора сертификата
-  const selectedCert = await selectCertificateFromDialog("Выберите сертификат для подписания документа");
+  const selectedCert = await selectCertificateFromDialog('Выберите сертификат для подписания документа');
   
   if (!selectedCert) {
     throw new Error('Подписание отменено пользователем');

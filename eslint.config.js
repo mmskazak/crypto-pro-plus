@@ -32,7 +32,7 @@ export default defineConfig([
     // ✅ Дополнительные кастомные правила можно указать здесь
     rules: {
       'no-console': 'off',      // полностью отключить console.log
-      'no-unused-vars': 'error', // Ошибка при неиспользуемых переменных
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // Ошибка при неиспользуемых переменных (кроме параметров вида _foo)
       'quotes': ['error', 'single'], // Требует одинарные кавычки
     },
   },

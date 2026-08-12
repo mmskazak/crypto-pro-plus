@@ -5,10 +5,10 @@ import { cadesplugin } from '../cadesplugin-wrapper.js';
  * Проверяет detached подпись CAdES
  * @param {string} dataBase64 - Исходные данные в base64
  * @param {string} signatureBase64 - Подпись в base64
- * @param {boolean} checkCertificate - Проверять ли сертификат (по умолчанию true)
+ * @param {boolean} _checkCertificate - Проверять ли сертификат (по умолчанию true) [зарезервировано, пока не используется]
  * @returns {Promise<boolean>} - true если подпись валидна
  */
-export async function verifyDetachedSignature(dataBase64, signatureBase64, checkCertificate = true) {
+export async function verifyDetachedSignature(dataBase64, signatureBase64, _checkCertificate = true) {
   try {
     await cadesplugin;
     
@@ -33,10 +33,10 @@ export async function verifyDetachedSignature(dataBase64, signatureBase64, check
 /**
  * Проверяет attached подпись CAdES
  * @param {string} signatureBase64 - Подписанное сообщение в base64
- * @param {boolean} checkCertificate - Проверять ли сертификат (по умолчанию true)
+ * @param {boolean} _checkCertificate - Проверять ли сертификат (по умолчанию true) [зарезервировано, пока не используется]
  * @returns {Promise<{isValid: boolean, content?: string}>} - результат проверки и содержимое
  */
-export async function verifyAttachedSignature(signatureBase64, checkCertificate = true) {
+export async function verifyAttachedSignature(signatureBase64, _checkCertificate = true) {
   try {
     await cadesplugin;
     
