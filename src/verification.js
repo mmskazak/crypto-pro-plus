@@ -5,10 +5,9 @@ import { cadesplugin } from '../cadesplugin-wrapper.js';
  * Проверяет detached подпись CAdES
  * @param {string} dataBase64 - Исходные данные в base64
  * @param {string} signatureBase64 - Подпись в base64
- * @param {boolean} _checkCertificate - Проверять ли сертификат (по умолчанию true) [зарезервировано, пока не используется]
  * @returns {Promise<boolean>} - true если подпись валидна
  */
-export async function verifyDetachedSignature(dataBase64, signatureBase64, _checkCertificate = true) {
+export async function verifyDetachedSignature(dataBase64, signatureBase64) {
   try {
     await cadesplugin;
     
@@ -33,10 +32,9 @@ export async function verifyDetachedSignature(dataBase64, signatureBase64, _chec
 /**
  * Проверяет attached подпись CAdES
  * @param {string} signatureBase64 - Подписанное сообщение в base64
- * @param {boolean} _checkCertificate - Проверять ли сертификат (по умолчанию true) [зарезервировано, пока не используется]
  * @returns {Promise<{isValid: boolean, content?: string}>} - результат проверки и содержимое
  */
-export async function verifyAttachedSignature(signatureBase64, _checkCertificate = true) {
+export async function verifyAttachedSignature(signatureBase64) {
   try {
     await cadesplugin;
     
@@ -175,23 +173,21 @@ export async function getSignersInfo(signatureBase64, isDetached = true, dataBas
  * @param {string} options.data - Исходные данные в base64 (для detached)
  * @param {boolean} options.isDetached - true для detached, false для attached
  * @param {boolean} options.hasTimestamp - true если подпись содержит метку времени
- * @param {boolean} options.checkCertificate - проверять ли сертификат
  * @returns {Promise<object>} - результат проверки
  */
 export async function verifySignature(signatureBase64, options = {}) {
   const {
     data = null,
     isDetached = true,
-    hasTimestamp = false,
-    checkCertificate = true
+    hasTimestamp = false
   } = options;
-  
+
   if (hasTimestamp) {
     return await verifyTimestampedSignature(data, signatureBase64, isDetached);
   } else if (isDetached) {
-    const isValid = await verifyDetachedSignature(data, signatureBase64, checkCertificate);
+    const isValid = await verifyDetachedSignature(data, signatureBase64);
     return { isValid };
   } else {
-    return await verifyAttachedSignature(signatureBase64, checkCertificate);
+    return await verifyAttachedSignature(signatureBase64);
   }
 }
