@@ -1,6 +1,7 @@
 // src/countersigning.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
 import { getCertificateByThumbprint } from './certificates.js';
+import { logger } from './logger.js';
 
 /**
  * Создает контрподпись (подписывает существующую подпись)
@@ -200,7 +201,7 @@ export async function getCounterSignersInfo(signatureBase64, dataBase64 = null, 
     
     return counterSignersInfo;
   } catch (err) {
-    console.error('Ошибка при получении информации о контрподписчиках:', err);
+    logger.error('Ошибка при получении информации о контрподписчиках:', err);
     return [];
   }
 }

@@ -18,6 +18,7 @@
         "./countersigning": "./src/countersigning.js",
         "./utils": "./src/utils.js",
         "./common": "./src/common.js",
+        "./logger": "./src/logger.js",
         "./cadesplugin-wrapper": "./cadesplugin-wrapper.js"
     },
     "keywords": [

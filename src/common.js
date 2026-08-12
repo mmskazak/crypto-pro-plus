@@ -1,5 +1,6 @@
 // src/common.js
-import { cadesplugin } from '../cadesplugin-wrapper.js'; 
+import { cadesplugin } from '../cadesplugin-wrapper.js';
+import { logger } from './logger.js';
 
 // Вспомогательная функция для открытия хранилища сертификатов
 export async function openCertificateStore() {
@@ -17,6 +18,6 @@ export async function pluginVersion() {
   const about = await cadesplugin.CreateObjectAsync('CAdESCOM.About');
   // Получаем версию плагина
   const version = await about.Version;
-  console.info('Плагин КриптоПро успешно загружен. Версия:', version);
+  logger.info('Плагин КриптоПро успешно загружен. Версия:', version);
   return version;
 }

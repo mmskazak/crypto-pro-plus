@@ -1,5 +1,6 @@
 // src/verification.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
+import { logger } from './logger.js';
 
 /**
  * Проверяет detached подпись CAdES
@@ -24,7 +25,7 @@ export async function verifyDetachedSignature(dataBase64, signatureBase64) {
     
     return true;
   } catch (err) {
-    console.error('Ошибка при проверке detached подписи:', err);
+    logger.error('Ошибка при проверке detached подписи:', err);
     return false;
   }
 }
@@ -51,7 +52,7 @@ export async function verifyAttachedSignature(signatureBase64) {
       content: content
     };
   } catch (err) {
-    console.error('Ошибка при проверке attached подписи:', err);
+    logger.error('Ошибка при проверке attached подписи:', err);
     return {
       isValid: false
     };
@@ -104,12 +105,12 @@ export async function verifyTimestampedSignature(dataBase64, signatureBase64, is
         };
       }
     } catch (timestampErr) {
-      console.warn('Не удалось получить информацию о метке времени:', timestampErr);
+      logger.warn('Не удалось получить информацию о метке времени:', timestampErr);
     }
-    
+
     return result;
   } catch (err) {
-    console.error('Ошибка при проверке подписи с меткой времени:', err);
+    logger.error('Ошибка при проверке подписи с меткой времени:', err);
     return {
       isValid: false
     };
@@ -161,7 +162,7 @@ export async function getSignersInfo(signatureBase64, isDetached = true, dataBas
     
     return signersInfo;
   } catch (err) {
-    console.error('Ошибка при получении информации о подписчиках:', err);
+    logger.error('Ошибка при получении информации о подписчиках:', err);
     return [];
   }
 }

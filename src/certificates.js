@@ -1,11 +1,12 @@
 // src/certificates.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
 import { openCertificateStore } from './common.js';
+import { logger } from './logger.js';
 
 export async function countCertificates() {
   const { store, certs } = await openCertificateStore();
   const count = await certs.Count;
-  console.log('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
+  logger.debug('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
   await store.Close();
   return count;
 }
@@ -17,7 +18,7 @@ export async function getCertificateByThumbprint(thumbprint) {
   const count = await foundCerts.Count;
   if (count === 0) {
     await store.Close();
-    console.log('Сертификат с указанным отпечатком не найден');
+    logger.debug('Сертификат с указанным отпечатком не найден');
     return null;
   }
 
@@ -96,7 +97,7 @@ export async function selectCertificateFromDialog(title = 'Выберите се
     
     const count = await selectedCerts.Count;
     if (count === 0) {
-      console.log('Пользователь отменил выбор сертификата');
+      logger.debug('Пользователь отменил выбор сертификата');
       return null;
     }
     
@@ -109,7 +110,7 @@ export async function selectCertificateFromDialog(title = 'Выберите се
     };
     
   } catch (error) {
-    console.error('Ошибка при выборе сертификата:', error);
+    logger.error('Ошибка при выборе сертификата:', error);
     throw new Error(`Не удалось показать диалог выбора сертификата: ${error.message}`);
   }
 }
@@ -139,7 +140,7 @@ export async function getValidCertificates() {
         });
       }
     } catch (error) {
-      console.warn(`Ошибка при проверке сертификата ${certInfo.thumbprint}:`, error);
+      logger.warn(`Ошибка при проверке сертификата ${certInfo.thumbprint}:`, error);
     }
   }
   
