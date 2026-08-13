@@ -1,5 +1,7 @@
 # @mmskazak/crypto-pro-plus
 
+[![CI](https://github.com/mmskazak/crypto-pro-plus/actions/workflows/ci.yml/badge.svg)](https://github.com/mmskazak/crypto-pro-plus/actions/workflows/ci.yml)
+
 📦 Современная обёртка над [CryptoPro CAdES plugin](https://www.cryptopro.ru/products/cades)  
 Позволяет удобно работать с сертификатами, получать информацию, подписывать данные (attached/detached) и добавлять метку времени — всё на `async/await`.
 
@@ -92,11 +94,16 @@ import { pluginVersion } from '@mmskazak/crypto-pro-plus/common';
 import { pluginVersion } from '@mmskazak/crypto-pro-plus/common';
 import { countCertificates } from '@mmskazak/crypto-pro-plus/certificates';
 
-const version = await pluginVersion();
-console.log("Версия плагина:", version);
+try {
+  const version = await pluginVersion();
+  console.log("Версия плагина:", version);
 
-const count = await countCertificates();
-console.log("Сертификатов найдено:", count);
+  const count = await countCertificates();
+  console.log("Сертификатов найдено:", count);
+} catch (error) {
+  // Плагин не установлен, хранилище недоступно и т.п.
+  console.error("Плагин КриптоПро недоступен:", error.message);
+}
 ```
 
 ---
@@ -477,6 +484,8 @@ setLogger();
 
 ## 📌 API
 
+> **Обработка ошибок**: функции получения данных (`pluginVersion`, `countCertificates`, `getCertificates` и т.п.) и функции подписания выбрасывают исключение, если что-то пошло не так (плагин недоступен, сертификат не найден и т.д.) — оборачивайте вызовы в `try/catch`. Функции проверки/валидации (`verify*`, `validateCertificateForSigning`, `getSignersInfo`, `getCounterSignersInfo`) исключений не бросают — они возвращают структурированный результат (`false`/`{ isValid: false }`/`[]`), потому что невалидная подпись или сертификат — ожидаемый результат проверки, а не ошибка.
+
 | Метод                                                            | Описание                                                                   |
 | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | pluginVersion()                                                  | Возвращает версию установленного плагина                                   |
@@ -526,8 +535,8 @@ setLogger();
 | createSequentialSignature(dataBase64, signers, isDetached)       | Создает последовательную подпись (цепочка подписей)                |
 | createMultipleSignature(dataBase64, thumbprints, isDetached, tspUrl) | Алиас для createCollectiveSignature (обратная совместимость)      |
 | **Функции проверки подписей**                                   |                                                                            |
-| verifyDetachedSignature(dataBase64, signatureBase64, checkCert)  | Проверяет detached подпись CAdES                                          |
-| verifyAttachedSignature(signatureBase64, checkCert)              | Проверяет attached подпись CAdES                                          |
+| verifyDetachedSignature(dataBase64, signatureBase64)             | Проверяет detached подпись CAdES                                          |
+| verifyAttachedSignature(signatureBase64)                         | Проверяет attached подпись CAdES                                          |
 | verifyTimestampedSignature(dataBase64, signatureBase64, isDetached)| Проверяет подпись с меткой времени CAdES-T                               |
 | getSignersInfo(signatureBase64, isDetached, dataBase64)          | Получает информацию о всех подписчиках (поддержка множественных подписей) |
 | verifySignature(signatureBase64, options)                        | Универсальная функция проверки подписи                                    |
@@ -538,6 +547,19 @@ setLogger();
 | getCounterSignersInfo(signatureBase64, dataBase64, isDetached)   | Получает информацию о контрподписях                                       |
 | **Утилиты**                                                     |                                                                            |
 | toBase64Unicode(str)                                             | Кодирует строку в корректный base64 с поддержкой Unicode                   |
+
+---
+
+## 🧪 Разработка
+
+```bash
+npm install     # установка зависимостей
+npm test        # запуск тестов (Vitest, мок cadesplugin — реальный плагин не нужен)
+npm run lint    # проверка стиля кода
+npm run format  # автоформатирование (Prettier)
+```
+
+CI (GitHub Actions) прогоняет `lint` и `test` на Node 20.x/22.x при каждом push в `master` и на каждый pull request.
 
 ---
 
