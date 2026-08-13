@@ -1,6 +1,7 @@
 // src/signing.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
 import { getCertificateByThumbprint, selectCertificateFromDialog, validateCertificateForSigning } from './certificates.js';
+import { logger } from './logger.js';
 
 export async function signBase64Detached(dataBase64, thumbprint) {
   const cert = await getCertificateByThumbprint(thumbprint);
@@ -84,7 +85,7 @@ export async function signBase64AttachedWithTimestamp(dataBase64, thumbprint, ts
  */
 export async function signWithCertificateSelection(dataBase64, isDetached = true, tspUrl = null) {
   // Показываем диалог выбора сертификата
-  const selectedCert = await selectCertificateFromDialog("Выберите сертификат для подписания документа");
+  const selectedCert = await selectCertificateFromDialog('Выберите сертификат для подписания документа');
   
   if (!selectedCert) {
     throw new Error('Подписание отменено пользователем');
@@ -99,7 +100,7 @@ export async function signWithCertificateSelection(dataBase64, isDetached = true
   
   // Показываем предупреждения, если есть
   if (validation.details?.warnings?.length > 0) {
-    console.warn('Предупреждения по сертификату:', validation.details.warnings);
+    logger.warn('Предупреждения по сертификату:', validation.details.warnings);
   }
   
   // Выполняем подписание
@@ -143,7 +144,7 @@ export async function signWithValidation(dataBase64, thumbprint, isDetached = tr
   
   // Показываем предупреждения
   if (validation.details?.warnings?.length > 0) {
-    console.warn('Предупреждения по сертификату:', validation.details.warnings);
+    logger.warn('Предупреждения по сертификату:', validation.details.warnings);
   }
   
   // Выполняем подписание

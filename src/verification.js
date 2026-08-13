@@ -1,14 +1,14 @@
 // src/verification.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
+import { logger } from './logger.js';
 
 /**
  * Проверяет detached подпись CAdES
  * @param {string} dataBase64 - Исходные данные в base64
  * @param {string} signatureBase64 - Подпись в base64
- * @param {boolean} checkCertificate - Проверять ли сертификат (по умолчанию true)
  * @returns {Promise<boolean>} - true если подпись валидна
  */
-export async function verifyDetachedSignature(dataBase64, signatureBase64, checkCertificate = true) {
+export async function verifyDetachedSignature(dataBase64, signatureBase64) {
   try {
     await cadesplugin;
     
@@ -25,7 +25,7 @@ export async function verifyDetachedSignature(dataBase64, signatureBase64, check
     
     return true;
   } catch (err) {
-    console.error('Ошибка при проверке detached подписи:', err);
+    logger.error('Ошибка при проверке detached подписи:', err);
     return false;
   }
 }
@@ -33,10 +33,9 @@ export async function verifyDetachedSignature(dataBase64, signatureBase64, check
 /**
  * Проверяет attached подпись CAdES
  * @param {string} signatureBase64 - Подписанное сообщение в base64
- * @param {boolean} checkCertificate - Проверять ли сертификат (по умолчанию true)
  * @returns {Promise<{isValid: boolean, content?: string}>} - результат проверки и содержимое
  */
-export async function verifyAttachedSignature(signatureBase64, checkCertificate = true) {
+export async function verifyAttachedSignature(signatureBase64) {
   try {
     await cadesplugin;
     
@@ -53,7 +52,7 @@ export async function verifyAttachedSignature(signatureBase64, checkCertificate 
       content: content
     };
   } catch (err) {
-    console.error('Ошибка при проверке attached подписи:', err);
+    logger.error('Ошибка при проверке attached подписи:', err);
     return {
       isValid: false
     };
@@ -106,12 +105,12 @@ export async function verifyTimestampedSignature(dataBase64, signatureBase64, is
         };
       }
     } catch (timestampErr) {
-      console.warn('Не удалось получить информацию о метке времени:', timestampErr);
+      logger.warn('Не удалось получить информацию о метке времени:', timestampErr);
     }
-    
+
     return result;
   } catch (err) {
-    console.error('Ошибка при проверке подписи с меткой времени:', err);
+    logger.error('Ошибка при проверке подписи с меткой времени:', err);
     return {
       isValid: false
     };
@@ -163,7 +162,7 @@ export async function getSignersInfo(signatureBase64, isDetached = true, dataBas
     
     return signersInfo;
   } catch (err) {
-    console.error('Ошибка при получении информации о подписчиках:', err);
+    logger.error('Ошибка при получении информации о подписчиках:', err);
     return [];
   }
 }
@@ -175,23 +174,21 @@ export async function getSignersInfo(signatureBase64, isDetached = true, dataBas
  * @param {string} options.data - Исходные данные в base64 (для detached)
  * @param {boolean} options.isDetached - true для detached, false для attached
  * @param {boolean} options.hasTimestamp - true если подпись содержит метку времени
- * @param {boolean} options.checkCertificate - проверять ли сертификат
  * @returns {Promise<object>} - результат проверки
  */
 export async function verifySignature(signatureBase64, options = {}) {
   const {
     data = null,
     isDetached = true,
-    hasTimestamp = false,
-    checkCertificate = true
+    hasTimestamp = false
   } = options;
-  
+
   if (hasTimestamp) {
     return await verifyTimestampedSignature(data, signatureBase64, isDetached);
   } else if (isDetached) {
-    const isValid = await verifyDetachedSignature(data, signatureBase64, checkCertificate);
+    const isValid = await verifyDetachedSignature(data, signatureBase64);
     return { isValid };
   } else {
-    return await verifyAttachedSignature(signatureBase64, checkCertificate);
+    return await verifyAttachedSignature(signatureBase64);
   }
 }

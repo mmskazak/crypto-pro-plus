@@ -35,16 +35,16 @@ export async function signHashDetachedWithTimestamp(hashBase64, thumbprint, algo
     throw new Error('Сертификат с указанным отпечатком не найден');
   }
 
-  const hashObj = await cadesplugin.CreateObjectAsync("CAdESCOM.HashedData");
+  const hashObj = await cadesplugin.CreateObjectAsync('CAdESCOM.HashedData');
   await hashObj.propset_Algorithm(algorithm);
   await hashObj.propset_DataEncoding(cadesplugin.CADESCOM_BASE64_TO_BINARY);
   await hashObj.SetHashValue(hashBase64);
 
-  const signer = await cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
+  const signer = await cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner');
   await signer.propset_Certificate(cert);
   await signer.propset_TSAAddress(tspUrl);
 
-  const signedData = await cadesplugin.CreateObjectAsync("CAdESCOM.CadesSignedData");
+  const signedData = await cadesplugin.CreateObjectAsync('CAdESCOM.CadesSignedData');
   return await signedData.SignHash(hashObj, signer, cadesplugin.CADESCOM_CADES_T);
 }
 

@@ -1,18 +1,14 @@
 // src/certificates.js
 import { cadesplugin } from '../cadesplugin-wrapper.js';
 import { openCertificateStore } from './common.js';
+import { logger } from './logger.js';
 
 export async function countCertificates() {
-  try {
-    const { store, certs } = await openCertificateStore();
-    const count = await certs.Count;
-    console.log('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
-    await store.Close();
-    return count;
-  } catch (err) {
-    console.error('Ошибка при проверке плагина:', err);
-    return null;
-  }
+  const { store, certs } = await openCertificateStore();
+  const count = await certs.Count;
+  logger.debug('Перечисление объектов плагина завершено. Найдено сертификатов:', count);
+  await store.Close();
+  return count;
 }
 
 export async function getCertificateByThumbprint(thumbprint) {
@@ -22,7 +18,7 @@ export async function getCertificateByThumbprint(thumbprint) {
   const count = await foundCerts.Count;
   if (count === 0) {
     await store.Close();
-    console.log('Сертификат с указанным отпечатком не найден');
+    logger.debug('Сертификат с указанным отпечатком не найден');
     return null;
   }
 
@@ -85,7 +81,7 @@ export async function getCertificates() {
  * @param {string} title - Заголовок диалога (опционально)
  * @returns {Promise<Object|null>} - Выбранный сертификат или null при отмене
  */
-export async function selectCertificateFromDialog(title = "Выберите сертификат для подписания") {
+export async function selectCertificateFromDialog(title = 'Выберите сертификат для подписания') {
   try {
     const { store, certs } = await openCertificateStore();
     
@@ -93,7 +89,7 @@ export async function selectCertificateFromDialog(title = "Выберите се
     const selectedCerts = await certs.Select(
       cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED,
       title,
-      "Выберите сертификат из списка:",
+      'Выберите сертификат из списка:',
       false // только один сертификат
     );
     
@@ -101,7 +97,7 @@ export async function selectCertificateFromDialog(title = "Выберите се
     
     const count = await selectedCerts.Count;
     if (count === 0) {
-      console.log('Пользователь отменил выбор сертификата');
+      logger.debug('Пользователь отменил выбор сертификата');
       return null;
     }
     
@@ -114,7 +110,7 @@ export async function selectCertificateFromDialog(title = "Выберите се
     };
     
   } catch (error) {
-    console.error('Ошибка при выборе сертификата:', error);
+    logger.error('Ошибка при выборе сертификата:', error);
     throw new Error(`Не удалось показать диалог выбора сертификата: ${error.message}`);
   }
 }
@@ -144,7 +140,7 @@ export async function getValidCertificates() {
         });
       }
     } catch (error) {
-      console.warn(`Ошибка при проверке сертификата ${certInfo.thumbprint}:`, error);
+      logger.warn(`Ошибка при проверке сертификата ${certInfo.thumbprint}:`, error);
     }
   }
   

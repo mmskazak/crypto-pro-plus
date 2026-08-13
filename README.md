@@ -454,6 +454,27 @@ counterSignersInfo.forEach(info => {
 
 ---
 
+## 🪵 Логирование
+
+По умолчанию библиотека пишет диагностические сообщения через `console` (`debug`/`info`/`warn`/`error`). Это поведение можно подменить своим логгером или отключить полностью:
+
+```js
+import { setLogger } from '@mmskazak/crypto-pro-plus/logger';
+
+// Свой логгер (например, обёртка над winston/pino) — можно переопределить только часть методов
+setLogger({
+  error: (...args) => myLogger.error(...args),
+});
+
+// Полностью отключить вывод
+setLogger(null);
+
+// Вернуть логирование в console
+setLogger();
+```
+
+---
+
 ## 📌 API
 
 | Метод                                                            | Описание                                                                   |
